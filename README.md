@@ -7,6 +7,8 @@ Neste _toy-problem_ temos uma exchange **pocdelayed.work.exchange** do tipo TOPI
 
 Temos um exchange de penalidades **pocdelayed.wait.exchange** do tipo TOPIC que irá receber mensagens de todas as filas com uma determinado tempo de espera. Através da flag **x-dead-letter-exchange** configuramos que todas as mensagens na fila de espera retornão para uma determinada exchange, neste caso a de trabalho **pocdelayed.work.exchange** após a expiração do TTL
 
+![delayed-exchange-diagram](https://github.com/leojasmim/delayed-exchange/blob/master/rabbitmq-delayed-exchange.png)
+
 ## Passo-a-passo
 1. Execute o projeto em **delayed-exchange/consumer** para consumir das 3 filas distintas: `go run main.go a` Para consumir da fila A;
 `go run main.go b` Para consumir da fila B; `go run main.go c` Para consumir da fila C.
