@@ -74,11 +74,12 @@ func main() {
 			message := models.ConvertArrayByteToMessage(msg.Body)
 			log.Printf(" [x] Consumer message %s from %s", message.ID, message.Key)
 
+			//ZZZZ.....
+			log.Printf(" [x] Processing message %s ...", message.ID)
+			time.Sleep(10000 * time.Millisecond)
+
 			// Muda a RoutingKey para outra fila
 			message.Key = changeKey(message.Key)
-
-			//ZZZZ.....
-			time.Sleep(10000 * time.Millisecond)
 
 			//Publica Mensagem na Fila de Espera
 			err = PublisherMessageIntoQueueWait(message)
@@ -146,7 +147,7 @@ func PublisherMessageIntoQueueWait(msg *models.Message) error {
 			DeliveryMode: amqp.Persistent,
 			ContentType:  "text/plain, charset=UTF-8",
 			Body:         models.ConvertMessageIntoByteArray(msg),
-			Expiration:   getExpirationTime(msg.Key),
+			Expiration:   "10000", //Tempo de espera na fila de penalidade (10s),
 		})
 
 	if err != nil {
@@ -198,20 +199,4 @@ func changeKey(key string) string {
 		return "work.a"
 	}
 	return "work.a"
-}
-
-// Lógica de TTL
-//	- Mensagens da fila A irão para a espera e serão republicadas na Fila B
-//	- Mensagens da fila B irão para a espera e serão republicadas na Fila C
-//	- Mensagens da fila C irão para a espera e serão republicadas na Fila A
-func getExpirationTime(key string) string {
-	switch key {
-	case "work.a":
-		return "10000"
-	case "work.b":
-		return "15000"
-	case "work.c":
-		return "20000"
-	}
-	return "30000"
 }
